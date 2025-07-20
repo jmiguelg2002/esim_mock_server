@@ -1,7 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import Optional
-import uvicorn
 
 app = FastAPI(title="Mock SES & eSIM Server")
 
@@ -10,11 +9,30 @@ user_profiles = {
     "714011002222222": {
         "user_id": "user_001",
         "esim_provisioned": True,
-        "profile_id": "eSim-ABC123",
+        "profile_id": "eSim-2222",
         "operator": "TelcoX"
     },
-    "714011003333333": {
+    "714011002333333": {
         "user_id": "user_002",
+        "esim_provisioned": True,
+        "profile_id": "eSim-3333",
+        "operator": "TelcoX"
+    },
+    "714011002444444": {
+        "user_id": "user_003",
+        "esim_provisioned": True,
+        "profile_id": "eSim-4444",
+        "operator": "TelcoX"
+    },
+    "714011002555555": {
+        "user_id": "user_004",
+        "esim_provisioned": True,
+        "profile_id": "eSim-5555",
+        "operator": "TelcoX"
+    },
+    # Example unprovisioned IMSI for testing
+    "714011003333333": {
+        "user_id": "user_005",
         "esim_provisioned": False
     }
 }
@@ -40,10 +58,15 @@ def validate_imsi(req: ValidateRequest):
 
 @app.post("/provision")
 def provision_esim(req: ProvisionRequest):
-    if req.imsi in user_profiles:
-        profile = user_profiles[req.imsi]
+    profile = user_profiles.get(req.imsi)
+    if profile:
         if profile.get("esim_provisioned"):
-            return {"message": "Already provisioned", "profile_id": profile["profile_id"]}
+            return {
+                "message": "Already provisioned",
+                "user_id": profile["user_id"],
+                "profile_id": profile["profile_id"],
+                "operator": profile.get("operator", "Unknown")
+            }
         # Simulate provisioning
         profile["esim_provisioned"] = True
         profile["profile_id"] = f"eSim-{req.imsi[-4:]}"
@@ -55,10 +78,3 @@ def provision_esim(req: ProvisionRequest):
             "operator": req.operator
         }
     raise HTTPException(status_code=404, detail="IMSI not found for provisioning")
-
-@app.get("/")
-def health():
-    return {"status": "Mock SES eSIM Server running"}
-
-if __name__ == "__main__":
-    uvicorn.run("esim_mock_server:app", host="0.0.0.0", port=8082, reload=True)
