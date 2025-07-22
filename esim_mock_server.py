@@ -22,17 +22,24 @@ user_profiles = {
         "user_id": "user_003",
         "esim_provisioned": True,
         "profile_id": "eSim-4444",
-        "operator": "TelcoX"
+        "operator": "TelcoY"
     },
     "714011002555555": {
         "user_id": "user_004",
         "esim_provisioned": True,
         "profile_id": "eSim-5555",
-        "operator": "TelcoX"
+        "operator": "TelcoY"
     },
+    "714011002666666": {
+        "user_id": "user_abc",
+        "esim_provisioned": True,
+        "profile_id": "eSim-6666",
+        "operator": "TelcoY"
+    },
+    
     # Example unprovisioned IMSI for testing
     "714011003333333": {
-        "user_id": "user_005",
+        "user_id": "user_unknown",
         "esim_provisioned": False
     }
 }
